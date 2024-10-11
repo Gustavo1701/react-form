@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import Input from './components/input/input'
 
 function App() {
 
@@ -12,15 +13,25 @@ function App() {
 
       <form className='row g-3 p-5'>
 
-        <div className="col-md-6">
+        <Input
+          label='Nome Completo'
+          id='nomeCompleto'
+        />
+
+        {/* <div className="col-md-6">
           <label htmlFor="nomeCompleto" className="form-label">Nome Completo</label>
           <input type="text" className="form-control" id="nomeCompleto" />
-        </div>
+        </div> */}
 
-        <div className="col-md-6">
+        <Input
+          label='Nome Mãe'
+          id='nomeMae'
+        />
+
+        {/* <div className="col-md-6">
           <label htmlFor="nomedamae" className="form-label">Nome da Mãe</label>
           <input type="text" className="form-control" id="nomeMae" />
-        </div>
+        </div> */}
 
         <div className="col-md-2">
           <label htmlFor="senha" className="form-label">Data Nascimento</label>
@@ -47,12 +58,12 @@ function App() {
           <input type="text" className="form-control" id="endereco" />
         </div>
 
-        <div className="col-md-1">
+        <div className="col-md-2">
           <label htmlFor="numero" className="form-label">Número</label>
           <input type="number" className="form-control" id="numero" />
         </div>
 
-        <div className="col-md-11">
+        <div className="col-md-10">
           <label htmlFor="complemento" className="form-label">Complemento</label>
           <input type="text" className="form-control" id="complemento" />
         </div>
