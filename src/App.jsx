@@ -22,14 +22,19 @@ function App() {
           <input type="text" className="form-control" id="nomeMae" />
         </div>
 
-        <div className="col-md-6">
-          <label htmlFor="email" className="form-label">Email</label>
-          <input type="email" className="form-control" id="email" />
+        <div className="col-md-2">
+          <label htmlFor="senha" className="form-label">Data Nascimento</label>
+          <input type="date" className="form-control" id="dtNascimento" />
+        </div>
+
+        <div className="col-md-4">
+          <label htmlFor="senha" className="form-label">Senha</label>
+          <input type="password" className="form-control" id="senha" />
         </div>
 
         <div className="col-md-6">
-          <label htmlFor="senha" className="form-label">Senha</label>
-          <input type="password" className="form-control" id="senha" />
+          <label htmlFor="email" className="form-label">Email</label>
+          <input type="email" className="form-control" id="email" />
         </div>
 
         <div className="col-md-4">
