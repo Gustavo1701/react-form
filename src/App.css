@@ -5,6 +5,17 @@
   text-align: center;
 }
 
+h2 {
+  color: aliceblue;
+  margin-top: 1em;
+  margin-bottom: 2em;
+}
+
+label {
+  color: aliceblue;
+  float: left !important;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

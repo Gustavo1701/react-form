@@ -1,149 +1,112 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react';
 import './App.css'
-import Input from './components/input/input'
+import { Button } from './components/button/Button'
+import { Input } from './components/input/Input'
+import { Select } from './components/input/Select'
 
 function App() {
+  const [nomeCompleto, setNomeCompleto] = useState('');
+  const [nomeMae, setNomeMae] = useState('');
 
+  const enviar = e => {
+    //evita que a tela carregue depois de clicar no botão submit do form
+    e.preventDefault();
+    console.log('Form:', nomeCompleto, nomeMae);
+  }
 
   return (
-    <main className='form-pessoa bg-info-subtle text-info-emphasis'>
-      <h2 className='p-2'>Cadastro de Pessoa</h2>
+    <>
+      <main className="form-pessoa">
+        <h2>Cadastro de Pessoa</h2>
 
-      <form className='row g-3 p-5'>
+        <form className='row g-3' onSubmit={enviar}>
+          <Input
+            label='Nome Completo'
+            id='nomeCompleto'
+            handleChange={(e) =>{ 
+              console.log(e.target.value)
+              setNomeCompleto(e.target.value)  // atualiza o state com o novo valor digitado no input
+            }}
+          />
 
-        <Input
-          label='Nome Completo'
-          id='nomeCompleto'
-        />
+          <Input
+            label='Nome Mãe'
+            id='nomeMae'
+            handleChange={(e) =>{ 
+              console.log(e.target.value)
+              setNomeMae(e.target.value)  // atualiza o state com o novo valor digitado no input
+            }}
+          />
 
-        {/* <div className="col-md-6">
-          <label htmlFor="nomeCompleto" className="form-label">Nome Completo</label>
-          <input type="text" className="form-control" id="nomeCompleto" />
-        </div> */}
-
-        <Input
-          label='Nome Mãe'
-          id='nomeMae'
-        />
-
-        {/* <div className="col-md-6">
-          <label htmlFor="nomedamae" className="form-label">Nome da Mãe</label>
-          <input type="text" className="form-control" id="nomeMae" />
-        </div> */}
-         <Input
-            label='Data Nascimento'
-            id='dtNascimento'
-            type='date' 
+          <Input
             inputSize={2}
-         />   
+            label='Data Nascimento'
+            id='dataNascimento'
+            type='date'
+          />
 
-        {/* <div className="col-md-2">
-          <label htmlFor="senha" className="form-label">Data Nascimento</label>
-          <input type="date" className="form-control" id="dtNascimento" />
-        </div> */}
+          <Input
+            inputSize={5}
+            label='Email'
+            id='email'
+            type='email'
 
-        <Input
-          label='Senha'
-          id='senha'
-          type='password'
-          inputSize={4}
-        />
-        {/* <div className="col-md-4">
-          <label htmlFor="senha" className="form-label">Senha</label>
-          <input type="password" className="form-control" id="senha" />
-        </div> */}
+          />
 
-        <Input 
-          label='Email'
-          id='email'
-          type='email'
-          
-        />
+          <Input
+            inputSize={5}
+            label='Senha'
+            id='senha'
+            type='password'
+          />
 
-        {/* <div className="col-md-6">
-          <label htmlFor="email" className="form-label">Email</label>
-          <input type="email" className="form-control" id="email" />
-        </div> */}
+          <Input
+            inputSize={4}
+            label='CEP'
+            id='cep'
+            type='text'
+          />
 
-        <Input
-          label='CEP'
-          id='cep'
-          inputSize='4'
-        />
+          <Input
+            inputSize={8}
+            label='Endereço'
+            id='endereco'
+          />
 
-        {/* <div className="col-md-4">
-          <label htmlFor="cep" className="form-label">CEP</label>
-          <input type="text" className="form-control" id="cep" />
-        </div> */}
+          <Input
+            inputSize={1}
+            label='Número'
+            id='numero'
+            type='number'
+          />
 
-        <Input
-          label='Endereço'
-          id='endereco'
-          inputSize='8'
-        />
+          <Input
+            inputSize={11}
+            label='Complemento'
+            id='complemento'
+          />
 
-        {/* <div className="col-md-8">
-          <label htmlFor="endereco" className="form-label">Endereço</label>
-          <input type="text" className="form-control" id="endereco" />
-        </div> */}
+          <Input
+            inputSize={4}
+            label='Bairro'
+            id='bairro'
+          />
 
-        <Input
-          label='numero'
-          id='numero'
-          type='number'
-          inputSize='2'
-        />
+          <Select
+            label='Estado'
+            id='estado'
+          />
 
-        {/* <div className="col-md-2">
-          <label htmlFor="numero" className="form-label">Número</label>
-          <input type="number" className="form-control" id="numero" />
-        </div> */}
+          <Select
+            label='Cidade'
+            id='cidade'
+          />
 
-        <Input
-          label='Complemento'
-          id='complemento'
-          inputSize='10' 
-        />
-
-        {/* <div className="col-md-10">
-          <label htmlFor="complemento" className="form-label">Complemento</label>
-          <input type="text" className="form-control" id="complemento" />
-        </div> */}
-
-        <Input
-          label='Bairro'
-          id='bairro'
-          inputSize='4'
-        />
-
-        {/* <div className="col-md-4">
-          <label htmlFor="bairro" className="form-label">Bairro</label>
-          <input type="text" className="form-control" id="bairro" />
-        </div> */}
-
-
-        <div className="col-md-4">
-          <label htmlFor="estado" className="form-label">Estado</label>
-          <select id="estado" class="form-select">
-            <option selected>Selecione...</option>
-            <option>.</option>
-          </select>
-        </div>
-
-        <div className="col-md-4">
-          <label htmlFor="cidade" className="form-label">Cidade</label>
-          <select id="cidade" class="form-select">
-            <option selected>Selecione...</option>
-            <option>.</option>
-          </select>
-        </div>
-
-
-      </form>
-
-    </main>
+          <Button type='submit' label='Salvar' />
+          <Button type='reset' variant='light' label='Limpar' />
+        </form>
+      </main>
+    </>
   )
 }
 

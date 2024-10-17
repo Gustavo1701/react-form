@@ -1,12 +1,8 @@
-const Input = ({inputSize = 6, label, id, type = 'text'}) => {
+export const Input = ({ inputSize = 6, label, id, type = 'text', handleChange, ref }) => {
     return (
-        <>
-            <div className={`col-md-${inputSize}`}>
-                <label htmlFor={id} className="form-label">{label}</label>
-                <input type={type} className="form-control" id={id} />
-            </div>
-        </>
-    );
+        <div className={`col-md-${inputSize}`}>
+            <label htmlFor={id} className="form-label">{label}</label>
+            <input ref={ref} type={type} className="form-control" id={id} onChange={handleChange} />
+        </div>
+    )
 }
-
-export default Input;
