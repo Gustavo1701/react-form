@@ -32,46 +32,97 @@ function App() {
           <label htmlFor="nomedamae" className="form-label">Nome da Mãe</label>
           <input type="text" className="form-control" id="nomeMae" />
         </div> */}
+         <Input
+            label='Data Nascimento'
+            id='dtNascimento'
+            type='date' 
+            inputSize={2}
+         />   
 
-        <div className="col-md-2">
+        {/* <div className="col-md-2">
           <label htmlFor="senha" className="form-label">Data Nascimento</label>
           <input type="date" className="form-control" id="dtNascimento" />
-        </div>
+        </div> */}
 
-        <div className="col-md-4">
+        <Input
+          label='Senha'
+          id='senha'
+          type='password'
+          inputSize={4}
+        />
+        {/* <div className="col-md-4">
           <label htmlFor="senha" className="form-label">Senha</label>
           <input type="password" className="form-control" id="senha" />
-        </div>
+        </div> */}
 
-        <div className="col-md-6">
+        <Input 
+          label='Email'
+          id='email'
+          type='email'
+          
+        />
+
+        {/* <div className="col-md-6">
           <label htmlFor="email" className="form-label">Email</label>
           <input type="email" className="form-control" id="email" />
-        </div>
+        </div> */}
 
-        <div className="col-md-4">
+        <Input
+          label='CEP'
+          id='cep'
+          inputSize='4'
+        />
+
+        {/* <div className="col-md-4">
           <label htmlFor="cep" className="form-label">CEP</label>
           <input type="text" className="form-control" id="cep" />
-        </div>
+        </div> */}
 
-        <div className="col-md-8">
+        <Input
+          label='Endereço'
+          id='endereco'
+          inputSize='8'
+        />
+
+        {/* <div className="col-md-8">
           <label htmlFor="endereco" className="form-label">Endereço</label>
           <input type="text" className="form-control" id="endereco" />
-        </div>
+        </div> */}
 
-        <div className="col-md-2">
+        <Input
+          label='numero'
+          id='numero'
+          type='number'
+          inputSize='2'
+        />
+
+        {/* <div className="col-md-2">
           <label htmlFor="numero" className="form-label">Número</label>
           <input type="number" className="form-control" id="numero" />
-        </div>
+        </div> */}
 
-        <div className="col-md-10">
+        <Input
+          label='Complemento'
+          id='complemento'
+          inputSize='10' 
+        />
+
+        {/* <div className="col-md-10">
           <label htmlFor="complemento" className="form-label">Complemento</label>
           <input type="text" className="form-control" id="complemento" />
-        </div>
+        </div> */}
 
-        <div className="col-md-4">
+        <Input
+          label='Bairro'
+          id='bairro'
+          inputSize='4'
+        />
+
+        {/* <div className="col-md-4">
           <label htmlFor="bairro" className="form-label">Bairro</label>
           <input type="text" className="form-control" id="bairro" />
-        </div>
+        </div> */}
+
 
         <div className="col-md-4">
           <label htmlFor="estado" className="form-label">Estado</label>
