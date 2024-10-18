@@ -1,17 +1,26 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css'
-import { Button } from './components/button/Button'
+import { Button } from './components/button/Buttons'
 import { Input } from './components/input/Input'
-import { Select } from './components/input/Select'
+import { Select } from './components/select/select';
 
 function App() {
-  const [nomeCompleto, setNomeCompleto] = useState('');
-  const [nomeMae, setNomeMae] = useState('');
+  const inputRef = useRef(null);
+  const [formData, setFormData] = useState({});
+
+
+  const handleChange = (e) => {
+    /* formData.nomeCompleto = 12
+    formData['nomeMae'] */
+
+    console.log(e.target.id, e.target.value);
+    setFormData({ ...formData, [e.target.id]: e.target.value })
+  }
 
   const enviar = e => {
     //evita que a tela carregue depois de clicar no botão submit do form
     e.preventDefault();
-    console.log('Form:', nomeCompleto, nomeMae);
+    console.log('Form:', formData);
   }
 
   return (
@@ -23,19 +32,13 @@ function App() {
           <Input
             label='Nome Completo'
             id='nomeCompleto'
-            handleChange={(e) =>{ 
-              console.log(e.target.value)
-              setNomeCompleto(e.target.value)  // atualiza o state com o novo valor digitado no input
-            }}
+            handleChange={handleChange}
           />
 
           <Input
             label='Nome Mãe'
             id='nomeMae'
-            handleChange={(e) =>{ 
-              console.log(e.target.value)
-              setNomeMae(e.target.value)  // atualiza o state com o novo valor digitado no input
-            }}
+            handleChange={handleChange}
           />
 
           <Input
@@ -43,6 +46,7 @@ function App() {
             label='Data Nascimento'
             id='dataNascimento'
             type='date'
+            handleChange={handleChange}
           />
 
           <Input
@@ -50,7 +54,7 @@ function App() {
             label='Email'
             id='email'
             type='email'
-
+            handleChange={handleChange}
           />
 
           <Input
@@ -58,6 +62,7 @@ function App() {
             label='Senha'
             id='senha'
             type='password'
+            handleChange={handleChange}
           />
 
           <Input
@@ -65,12 +70,14 @@ function App() {
             label='CEP'
             id='cep'
             type='text'
+            handleChange={handleChange}
           />
 
           <Input
             inputSize={8}
             label='Endereço'
             id='endereco'
+            handleChange={handleChange}
           />
 
           <Input
@@ -78,28 +85,34 @@ function App() {
             label='Número'
             id='numero'
             type='number'
+            //ref={inputRef}
+            handleChange={handleChange}
           />
 
           <Input
             inputSize={11}
             label='Complemento'
             id='complemento'
+            handleChange={handleChange}
           />
 
           <Input
             inputSize={4}
             label='Bairro'
             id='bairro'
+            handleChange={handleChange}
           />
 
           <Select
             label='Estado'
             id='estado'
+            handleChange={handleChange}
           />
 
           <Select
             label='Cidade'
             id='cidade'
+            handleChange={handleChange}
           />
 
           <Button type='submit' label='Salvar' />
