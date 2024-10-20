@@ -23,33 +23,6 @@ function App() {
     setFormData({}); // Limpar os campos após envio
   };
 
-  //teste//
-
-  const [userData, setUserData] = useState({
-    endereco: '',
-    bairro: '',
-    cidade: '',
-    estado: '',
-  });
-
-  // useEffect(() => {
-  //   // Faz a requisição para a API quando o componente é montado
-  //   fetch('https://jsonplaceholder.typicode.com/users/1')
-  //     .then((response) => response.json())
-  //     .then((data) => {
-        
-  //     });
-  // }, []);
-
-  // return (
-  //   <form>
-  //     <div>
-  //       <label>Name:</label>
-  //       <input type="text" value={userData.name} readOnly />
-  //     </div>
-  //     <div>
-  //fim teste//
-
   useEffect(() => {
     const { cep } = formData;
     if (cep && cep.length === 8) {
@@ -68,21 +41,14 @@ function App() {
       }
 
       // Atualizando os campos do formulário
-      // setFormData((prevData) => ({
-      //   ...prevData,
-      //   endereco: response.data.street,
-      //   bairro: response.data.neighborhood,
-      //   estado: response.data.state,
-      //   cidade: response.data.city,
-      // }));
+      setFormData((prevData) => ({
+        ...prevData,
+        endereco: response.data.street,
+        bairro: response.data.neighborhood,
+        estado: response.data.state,
+        cidade: response.data.city,
+      }));
 
-      // Atualiza o estado com os dados recebidos da API
-      setUserData({
-        endereco: formData.endereco,
-        bairro: formData.bairro,
-        cidade: formData.cidade,
-        estado: formData.estado,
-      });
     } catch (error) {
       console.error("Erro ao buscar o CEP: " + cep, error);
       alert("CEP " + cep + " não encontrado. Digite apenas os números.");
@@ -144,7 +110,6 @@ function App() {
             inputSize={8}
             label='Endereço'
             id='endereco'
-            value={userData.endereco} readOnly
             handleChange={handleChange}
           />
 
@@ -167,21 +132,18 @@ function App() {
             inputSize={4}
             label='Bairro'
             id='bairro'
-            value={userData.bairro} readOnly
             handleChange={handleChange}
           />
 
           <Select
             label='Estado'
             id='estado'
-            value={userData.estado} readOnly
             handleChange={handleChange}
           />
 
           <Select
             label='Cidade'
             id='cidade'
-            value={userData.cidade} readOnly
             handleChange={handleChange}
           />
 
