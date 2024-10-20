@@ -1,27 +1,93 @@
-import { useRef, useState } from 'react';
-import './App.css'
-import { Button } from './components/button/Button'
-import { Input } from './components/input/Input'
-import { Select } from './components/input/Select'
+import { useEffect, useState } from 'react';
+import './App.css';
+import { Button } from './components/button/Button';
+import { Input } from './components/input/Input';
+import { Select } from './components/input/Select';
+import axios from 'axios';
 
 function App() {
-  const inputRef = useRef(null);
   const [formData, setFormData] = useState({});
-
+  const [jsonOutput, setJsonOutput] = useState('');
 
   const handleChange = (e) => {
-    /* formData.nomeCompleto = 12
-    formData['nomeMae'] */
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
-    console.log(e.target.id, e.target.value);
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-  }
-
-  const enviar = e => {
-    //evita que a tela carregue depois de clicar no botão submit do form
-    e.preventDefault();
+  const enviar = (e) => {
+    e.preventDefault(); // Evita o reload da página
     console.log('Form:', formData);
-  }
+
+    const jsonData = JSON.stringify(formData, null, 2);
+    setJsonOutput(jsonData);
+
+    setFormData({}); // Limpar os campos após envio
+  };
+
+  //teste//
+
+  const [userData, setUserData] = useState({
+    endereco: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+  });
+
+  // useEffect(() => {
+  //   // Faz a requisição para a API quando o componente é montado
+  //   fetch('https://jsonplaceholder.typicode.com/users/1')
+  //     .then((response) => response.json())
+  //     .then((data) => {
+        
+  //     });
+  // }, []);
+
+  // return (
+  //   <form>
+  //     <div>
+  //       <label>Name:</label>
+  //       <input type="text" value={userData.name} readOnly />
+  //     </div>
+  //     <div>
+  //fim teste//
+
+  useEffect(() => {
+    const { cep } = formData;
+    if (cep && cep.length === 8) {
+      buscarCep(cep);
+    }
+  }, [formData.cep]);
+
+  const buscarCep = async (cep) => {
+    try {
+      const response = await axios.get(`https://brasilapi.com.br/api/cep/v2/${cep}`);
+
+      if (response.data.erro) {
+        console.error("CEP " + cep + " não encontrado");
+        alert("CEP " + cep + " não encontrado");
+        return;
+      }
+
+      // Atualizando os campos do formulário
+      // setFormData((prevData) => ({
+      //   ...prevData,
+      //   endereco: response.data.street,
+      //   bairro: response.data.neighborhood,
+      //   estado: response.data.state,
+      //   cidade: response.data.city,
+      // }));
+
+      // Atualiza o estado com os dados recebidos da API
+      setUserData({
+        endereco: formData.endereco,
+        bairro: formData.bairro,
+        cidade: formData.cidade,
+        estado: formData.estado,
+      });
+    } catch (error) {
+      console.error("Erro ao buscar o CEP: " + cep, error);
+      alert("CEP " + cep + " não encontrado. Digite apenas os números.");
+    }
+  };
 
   return (
     <>
@@ -70,6 +136,7 @@ function App() {
             label='CEP'
             id='cep'
             type='text'
+            maxlength="8"
             handleChange={handleChange}
           />
 
@@ -77,6 +144,7 @@ function App() {
             inputSize={8}
             label='Endereço'
             id='endereco'
+            value={userData.endereco} readOnly
             handleChange={handleChange}
           />
 
@@ -85,7 +153,6 @@ function App() {
             label='Número'
             id='numero'
             type='number'
-            //ref={inputRef}
             handleChange={handleChange}
           />
 
@@ -100,27 +167,35 @@ function App() {
             inputSize={4}
             label='Bairro'
             id='bairro'
+            value={userData.bairro} readOnly
             handleChange={handleChange}
           />
 
           <Select
             label='Estado'
             id='estado'
+            value={userData.estado} readOnly
             handleChange={handleChange}
           />
 
           <Select
             label='Cidade'
             id='cidade'
+            value={userData.cidade} readOnly
             handleChange={handleChange}
           />
 
           <Button type='submit' label='Salvar' />
-          <Button type='reset' variant='light' label='Limpar' />
+          <Button type='reset' variant='light' label='Limpar' onClick={() => setFormData({})} />
         </form>
+
+        <div className="container text-light bg-dark">
+          <h3>Dados do JSON:</h3>
+          <pre>{jsonOutput}</pre>
+        </div>
       </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
