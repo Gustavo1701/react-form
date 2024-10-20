@@ -3,28 +3,10 @@ import './App.css';
 import { Button } from './components/button/Button';
 import { Input } from './components/input/Input';
 import { Select } from './components/input/Select';
-import axios from 'axios';
 
 function App() {
   const [formData, setFormData] = useState({});
   const [jsonOutput, setJsonOutput] = useState('');
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
-
-  const enviar = (e) => {
-    e.preventDefault(); // Evita o reload da página
-    console.log('Form:', formData);
-
-    const jsonData = JSON.stringify(formData, null, 2);
-    setJsonOutput(jsonData);
-
-    setFormData({}); // Limpar os campos após envio
-  };
-
-  //teste//
-
   const [userData, setUserData] = useState({
     endereco: '',
     bairro: '',
@@ -32,23 +14,16 @@ function App() {
     estado: '',
   });
 
-  // useEffect(() => {
-  //   // Faz a requisição para a API quando o componente é montado
-  //   fetch('https://jsonplaceholder.typicode.com/users/1')
-  //     .then((response) => response.json())
-  //     .then((data) => {
-        
-  //     });
-  // }, []);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
-  // return (
-  //   <form>
-  //     <div>
-  //       <label>Name:</label>
-  //       <input type="text" value={userData.name} readOnly />
-  //     </div>
-  //     <div>
-  //fim teste//
+  const enviar = (e) => {
+    e.preventDefault();
+    const jsonData = JSON.stringify(formData, null, 2);
+    setJsonOutput(jsonData);
+    setFormData({});
+  };
 
   useEffect(() => {
     const { cep } = formData;
@@ -59,142 +34,50 @@ function App() {
 
   const buscarCep = async (cep) => {
     try {
-      const response = await axios.get(`https://brasilapi.com.br/api/cep/v2/${cep}`);
-
-      if (response.data.erro) {
-        console.error("CEP " + cep + " não encontrado");
-        alert("CEP " + cep + " não encontrado");
-        return;
-      }
-
-      // Atualizando os campos do formulário
-      // setFormData((prevData) => ({
-      //   ...prevData,
-      //   endereco: response.data.street,
-      //   bairro: response.data.neighborhood,
-      //   estado: response.data.state,
-      //   cidade: response.data.city,
-      // }));
-
-      // Atualiza o estado com os dados recebidos da API
+      const response = await fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`);
+      if (!response.ok) throw new Error('Erro ao buscar CEP');
+      const data = await response.json();
+      console.log(data);
+      
       setUserData({
-        endereco: formData.endereco,
-        bairro: formData.bairro,
-        cidade: formData.cidade,
-        estado: formData.estado,
+        endereco: data.endereco,
+        bairro: data.bairro,
+        cidade: data.cidade,
+        estado: data.estado,
       });
     } catch (error) {
-      console.error("Erro ao buscar o CEP: " + cep, error);
-      alert("CEP " + cep + " não encontrado. Digite apenas os números.");
+      console.error(error);
     }
   };
 
   return (
-    <>
-      <main className="form-pessoa">
-        <h2>Cadastro de Pessoa</h2>
+    <main className="form-pessoa">
+      <h2>Cadastro de Pessoa</h2>
 
-        <form className='row g-3' onSubmit={enviar}>
-          <Input
-            label='Nome Completo'
-            id='nomeCompleto'
-            handleChange={handleChange}
-          />
+      <form className='row g-3' onSubmit={enviar}>
+        <Input label='Nome Completo' id='nomeCompleto' handleChange={handleChange} />
+        <Input label='Nome Mãe' id='nomeMae' handleChange={handleChange} />
+        <Input inputSize={2} label='Data Nascimento' id='dataNascimento' type='date' handleChange={handleChange} />
+        <Input inputSize={5} label='Email' id='email' type='email' handleChange={handleChange} />
+        <Input inputSize={5} label='Senha' id='senha' type='password' handleChange={handleChange} />
+        <Input inputSize={4} label='CEP' id='cep' type='text' maxLength="8" handleChange={handleChange} />
+        <Input inputSize={8} label='Endereço' id='endereco' value={userData.endereco} readOnly handleChange={handleChange} />
+        <Input inputSize={1} label='Número' id='numero' type='number' handleChange={handleChange} />
+        <Input inputSize={11} label='Complemento' id='complemento' handleChange={handleChange} />
+        <Input inputSize={4} label='Bairro' id='bairro' value={userData.bairro} readOnly handleChange={handleChange} />
+        
+        <Select label='Estado' id='estado' value={userData.estado} readOnly handleChange={handleChange} />
+        <Select label='Cidade' id='cidade' value={userData.cidade} readOnly handleChange={handleChange} />
+        
+        <Button type='submit' label='Salvar' />
+        <Button type='reset' variant='light' label='Limpar' onClick={() => setFormData({})} />
+      </form>
 
-          <Input
-            label='Nome Mãe'
-            id='nomeMae'
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={2}
-            label='Data Nascimento'
-            id='dataNascimento'
-            type='date'
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={5}
-            label='Email'
-            id='email'
-            type='email'
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={5}
-            label='Senha'
-            id='senha'
-            type='password'
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={4}
-            label='CEP'
-            id='cep'
-            type='text'
-            maxlength="8"
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={8}
-            label='Endereço'
-            id='endereco'
-            value={userData.endereco} readOnly
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={1}
-            label='Número'
-            id='numero'
-            type='number'
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={11}
-            label='Complemento'
-            id='complemento'
-            handleChange={handleChange}
-          />
-
-          <Input
-            inputSize={4}
-            label='Bairro'
-            id='bairro'
-            value={userData.bairro} readOnly
-            handleChange={handleChange}
-          />
-
-          <Select
-            label='Estado'
-            id='estado'
-            value={userData.estado} readOnly
-            handleChange={handleChange}
-          />
-
-          <Select
-            label='Cidade'
-            id='cidade'
-            value={userData.cidade} readOnly
-            handleChange={handleChange}
-          />
-
-          <Button type='submit' label='Salvar' />
-          <Button type='reset' variant='light' label='Limpar' onClick={() => setFormData({})} />
-        </form>
-
-        <div className="container text-light bg-dark">
-          <h3>Dados do JSON:</h3>
-          <pre>{jsonOutput}</pre>
-        </div>
-      </main>
-    </>
+      <div className="container text-light bg-dark">
+        <h3>Dados do JSON:</h3>
+        <pre>{jsonOutput}</pre>
+      </div>
+    </main>
   );
 }
 
