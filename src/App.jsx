@@ -2,16 +2,34 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { Button } from './components/button/Button';
 import { Input } from './components/input/Input';
-import { Select } from './components/input/Select';
+import { Select, SelectMunicipio } from './components/input/Select';
 import axios from 'axios';
 
 function App() {
   const [formData, setFormData] = useState({});
   const [jsonOutput, setJsonOutput] = useState('');
+  const [estadosArmazenados, setEstados] = useState([]);
+  const [municipiosArmazenados, setMunicipios] = useState([]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
+
+  //teste/////
+  // const handleChange = (e) => {
+  //   const { id, value } = e.target;
+  //   setFormData({ ...formData, [id]: value });
+
+  //   // Se o estado for alterado, limpar a cidade e buscar os municípios
+  //   if (id === 'estado') {
+  //     setMunicipios([]); // Limpa os municípios ao mudar o estado
+  //     const estadoSelecionado = estadosArmazenados.find(estado => estado.sigla === value);
+  //     if (estadoSelecionado) {
+  //       preencherMunicipios(estadoSelecionado.id); // Passa o id do estado
+  //     }
+  //   }
+  // };
+  //fim teste/////
 
   const enviar = (e) => {
     e.preventDefault(); // Evita o reload da página
@@ -54,6 +72,53 @@ function App() {
       alert("CEP " + cep + " não encontrado. Digite apenas os números.");
     }
   };
+
+  const preencherEstados = async () => {
+
+    try {
+      const response = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+      setEstados(response.data);
+
+    } catch (error) {
+      alert("Erro ao buscar os estados: ", error);
+    }
+  }
+
+  const preencherMunicipios = async (estado) => {
+    try {
+      const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estado}/municipios`)
+      setMunicipios(response.data)
+      console.log(response.data);
+
+    } catch (error) {
+      alert("Erro ao buscar municipios: ", error)
+    }
+  }
+
+  //teste 2///////
+  // const preencherMunicipios = async (idEstado) => {
+  //   try {
+  //     const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${idEstado}/municipios`);
+  //     setMunicipios(response.data);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     alert("Erro ao buscar municípios.");
+  //   }
+  // };
+  //fim teste 2//////
+
+  useEffect(() => {
+    preencherEstados();
+  }, [])
+
+  useEffect(() => {
+    const estadoSelecionado = formData.estado; // Pega o estado selecionado
+    if (estadoSelecionado) {
+      preencherMunicipios(estadoSelecionado);
+    }
+  }, [formData.estado]); // Chama ao mudar o estado
+
+
 
   return (
     <>
@@ -139,12 +204,20 @@ function App() {
             label='Estado'
             id='estado'
             handleChange={handleChange}
+            options={estadosArmazenados.map(estado => ({
+              value: estado.nome,
+              label: estado.sigla,
+            }))}
           />
 
-          <Select
+          <SelectMunicipio
             label='Cidade'
             id='cidade'
             handleChange={handleChange}
+            options={municipiosArmazenados.map(municipio => ({
+              value: municipio.nome,
+              label: municipio.nome,
+            }))}
           />
 
           <Button type='submit' label='Salvar' />
@@ -154,6 +227,7 @@ function App() {
         <div className="container text-light bg-dark">
           <h3>Dados do JSON:</h3>
           <pre>{jsonOutput}</pre>
+
         </div>
       </main>
     </>
