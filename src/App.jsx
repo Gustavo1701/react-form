@@ -8,6 +8,7 @@ import axios from 'axios'
 function App() {
   const [formData, setFormData] = useState({});
   const [jsonOutput, setJsonOutput] = useState('');
+  
   const [estadosArmazenados, setEstados] = useState([]);
   const [municipiosArmazenados, setMunicipios] = useState([]);
 
@@ -16,39 +17,15 @@ function App() {
     bairro: null,
     cidade: null,
     estado: null,
-  });
+  }); //dataCep criado para armazenar os dados da requisição Buscar CEP
+
+  const [dadosFinaisAtualizados, setDadosFinaisAtualizados] = useState({});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
+  }; // handleChange captura todos os dados dos inputs
 
-  //teste/////
-  // const handleChange = (e) => {
-  //   const { id, value } = e.target;
-  //   setFormData({ ...formData, [id]: value });
-
-  //   // Se o estado for alterado, limpar a cidade e buscar os municípios
-  //   if (id === 'estado') {
-  //     setMunicipios([]); // Limpa os municípios ao mudar o estado
-  //     const estadoSelecionado = estadosArmazenados.find(estado => estado.sigla === value);
-  //     if (estadoSelecionado) {
-  //       preencherMunicipios(estadoSelecionado.id); // Passa o id do estado
-  //     }
-  //   }
-  // };
-  //fim teste/////
-
-  const enviar = (e) => {
-    e.preventDefault(); // Evita o reload da página
-    console.log('Form:', formData);
-
-    const jsonData = JSON.stringify(formData, null, 2);
-    setJsonOutput(jsonData);
-
-    setFormData({}); // Limpar os campos após envio
-  };
-
-  useEffect(() => {
+  useEffect(() => { //atravez do formeData ele pega o objeto cep e verifica se foi digitado 8 caracteres, após isso ele inicia a função buscarCep com o parametro CEP
     const { cep } = formData;
     if (cep && cep.length === 8) {
       buscarCep(cep);
@@ -66,17 +43,17 @@ function App() {
       }
 
       // Atualizando os campos do formulário
-      setDataCep({
+      const newDataCep = {
         endereco: response.data.street,
         bairro: response.data.neighborhood,
         estado: response.data.state,
         cidade: response.data.city,
-      });
+      };
 
-      
+      setDataCep(newDataCep); // Atualiza o estado com os novos dados
+      numero.focus();
+     
 
-      console.log(response.data);
-      
     } catch (error) {
       console.error("Erro ao buscar o CEP: " + cep, error);
       alert("CEP " + cep + " não encontrado. Digite apenas os números.");
@@ -93,42 +70,56 @@ function App() {
       alert("Erro ao buscar os estados: ", error);
     }
   }
+  useEffect(() => {
+    const estadoAtualizado = dataCep.estado;
+    if (estadoAtualizado) {
+      preencherMunicipios(estadoAtualizado); // Chama a função com o estado atualizado
+    }
+  }, [dataCep.estado]);
 
-  const preencherMunicipios = async (estado) => {
+  const preencherMunicipios = async (estadoAtualizado) => {
     try {
-      const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estado}/municipios`)
+      const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoAtualizado}/municipios`)
       setMunicipios(response.data)
-      console.log(response.data);
+      console.log("preencher municipios com sucesso");
 
     } catch (error) {
       alert("Erro ao buscar municipios: ", error)
+      console.log("erro ao buscar municipio");
+
     }
   }
 
-  //teste 2///////
-  // const preencherMunicipios = async (idEstado) => {
-  //   try {
-  //     const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${idEstado}/municipios`);
-  //     setMunicipios(response.data);
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     alert("Erro ao buscar municípios.");
-  //   }
-  // };
-  //fim teste 2//////
+  // useEffect para atualizar dados finais
+  useEffect(() => {
+    const dadosAtualizados = {
+      ...formData,
+      ...dataCep,
+    };
+    setDadosFinaisAtualizados(dadosAtualizados);
+  }, [formData, dataCep]);
+  
+
+  const enviar = (e) => {
+    e.preventDefault();
+    console.log('Form:', dadosFinaisAtualizados);
+
+    const jsonData = JSON.stringify(dadosFinaisAtualizados, null, 2);
+    setJsonOutput(jsonData); //jsonData captura todas as informações dos inputs através do formData, transforma em string e coloca em um arquivo JSON
+
+    // setFormData({}); // não está limpando os campos
+  };
 
   useEffect(() => {
     preencherEstados();
   }, [])
 
-  useEffect(() => {
-    const estadoSelecionado = formData.estado; // Pega o estado selecionado
-    if (estadoSelecionado) {
-      preencherMunicipios(estadoSelecionado);
-    }
-  }, [formData.estado]); // Chama ao mudar o estado
-
-
+  // useEffect(() => {
+  //   const estadoSelecionado = formData.estado; // Pega o estado selecionado
+  //   if (estadoSelecionado) {
+  //     preencherMunicipios(estadoSelecionado);
+  //   }
+  // }, [formData.estado]); // Chama ao mudar o estado
 
   return (
     <>
@@ -215,7 +206,7 @@ function App() {
           <Select
             label='Estado'
             id='estado'
-            value={dataCep.estado}
+            valueEstado={dataCep.estado}
             handleChange={handleChange}
             options={estadosArmazenados.map(estado => ({
               value: estado.nome,
@@ -226,7 +217,7 @@ function App() {
           <SelectMunicipio
             label='Cidade'
             id='cidade'
-            value={dataCep.cidade}
+            valueMunicipio={dataCep.cidade}
             handleChange={handleChange}
             options={municipiosArmazenados.map(municipio => ({
               value: municipio.nome,
