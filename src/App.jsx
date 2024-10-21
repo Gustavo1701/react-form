@@ -3,13 +3,20 @@ import './App.css';
 import { Button } from './components/button/Button';
 import { Input } from './components/input/Input';
 import { Select, SelectMunicipio } from './components/input/Select';
-import axios from 'axios';
+import axios from 'axios'
 
 function App() {
   const [formData, setFormData] = useState({});
   const [jsonOutput, setJsonOutput] = useState('');
   const [estadosArmazenados, setEstados] = useState([]);
   const [municipiosArmazenados, setMunicipios] = useState([]);
+
+  const [dataCep, setDataCep] = useState({
+    endereco: null,
+    bairro: null,
+    cidade: null,
+    estado: null,
+  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -59,14 +66,17 @@ function App() {
       }
 
       // Atualizando os campos do formulário
-      setFormData((prevData) => ({
-        ...prevData,
+      setDataCep({
         endereco: response.data.street,
         bairro: response.data.neighborhood,
         estado: response.data.state,
         cidade: response.data.city,
-      }));
+      });
 
+      
+
+      console.log(response.data);
+      
     } catch (error) {
       console.error("Erro ao buscar o CEP: " + cep, error);
       alert("CEP " + cep + " não encontrado. Digite apenas os números.");
@@ -175,6 +185,7 @@ function App() {
             inputSize={8}
             label='Endereço'
             id='endereco'
+            value={dataCep.endereco}
             handleChange={handleChange}
           />
 
@@ -197,12 +208,14 @@ function App() {
             inputSize={4}
             label='Bairro'
             id='bairro'
+            value={dataCep.bairro}
             handleChange={handleChange}
           />
 
           <Select
             label='Estado'
             id='estado'
+            value={dataCep.estado}
             handleChange={handleChange}
             options={estadosArmazenados.map(estado => ({
               value: estado.nome,
@@ -213,6 +226,7 @@ function App() {
           <SelectMunicipio
             label='Cidade'
             id='cidade'
+            value={dataCep.cidade}
             handleChange={handleChange}
             options={municipiosArmazenados.map(municipio => ({
               value: municipio.nome,
