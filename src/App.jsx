@@ -121,6 +121,7 @@ function App() {
   //   }
   // }, [formData.estado]); // Chama ao mudar o estado
 
+
   return (
     <>
       <main className="form-pessoa">
@@ -226,7 +227,7 @@ function App() {
           />
 
           <Button type='submit' label='Salvar' />
-          <Button type='reset' variant='light' label='Limpar' onClick={() => setFormData({})} />
+          <Button type='reset' variant='light' label='Limpar' onClick={() => jsonOutput({})} />
         </form>
 
         <div className="container text-light bg-dark">
