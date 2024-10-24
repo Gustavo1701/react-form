@@ -1,125 +1,27 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-import { Button } from './components/button/Button';
-import { Input } from './components/input/Input';
-import { Select, SelectMunicipio } from './components/input/Select';
-import axios from 'axios'
+import { useRef, useState } from 'react';
+import './App.css'
+import { Button } from './components/button/Button'
+import { Input } from './components/input/Input'
+import { Select } from './components/input/Select'
 
 function App() {
+  const inputRef = useRef(null);
   const [formData, setFormData] = useState({});
-  const [jsonOutput, setJsonOutput] = useState('');
-  
-  const [estadosArmazenados, setEstados] = useState([]);
-  const [municipiosArmazenados, setMunicipios] = useState([]);
 
-  const [dataCep, setDataCep] = useState({
-    endereco: null,
-    bairro: null,
-    cidade: null,
-    estado: null,
-  }); //dataCep criado para armazenar os dados da requisição Buscar CEP
-
-  const [dadosFinaisAtualizados, setDadosFinaisAtualizados] = useState({});
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  }; // handleChange captura todos os dados dos inputs
+    /* formData.nomeCompleto = 12
+    formData['nomeMae'] */
 
-  useEffect(() => { //atravez do formeData ele pega o objeto cep e verifica se foi digitado 8 caracteres, após isso ele inicia a função buscarCep com o parametro CEP
-    const { cep } = formData;
-    if (cep && cep.length === 8) {
-      buscarCep(cep);
-    }
-  }, [formData.cep]);
-
-  const buscarCep = async (cep) => {
-    try {
-      const response = await axios.get(`https://brasilapi.com.br/api/cep/v2/${cep}`);
-
-      if (response.data.erro) {
-        console.error("CEP " + cep + " não encontrado");
-        alert("CEP " + cep + " não encontrado");
-        return;
-      }
-
-      // Atualizando os campos do formulário
-      const newDataCep = {
-        endereco: response.data.street,
-        bairro: response.data.neighborhood,
-        estado: response.data.state,
-        cidade: response.data.city,
-      };
-
-      setDataCep(newDataCep); // Atualiza o estado com os novos dados
-      numero.focus();
-     
-
-    } catch (error) {
-      console.error("Erro ao buscar o CEP: " + cep, error);
-      alert("CEP " + cep + " não encontrado. Digite apenas os números.");
-    }
-  };
-
-  const preencherEstados = async () => {
-
-    try {
-      const response = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
-      setEstados(response.data);
-
-    } catch (error) {
-      alert("Erro ao buscar os estados: ", error);
-    }
-  }
-  useEffect(() => {
-    const estadoAtualizado = dataCep.estado;
-    if (estadoAtualizado) {
-      preencherMunicipios(estadoAtualizado); // Chama a função com o estado atualizado
-    }
-  }, [dataCep.estado]);
-
-  const preencherMunicipios = async (estadoAtualizado) => {
-    try {
-      const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoAtualizado}/municipios`)
-      setMunicipios(response.data)
-      console.log("preencher municipios com sucesso");
-
-    } catch (error) {
-      alert("Erro ao buscar municipios: ", error)
-      console.log("erro ao buscar municipio");
-
-    }
+    console.log(e.target.id, e.target.value);
+    setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
-  // useEffect para atualizar dados finais
-  useEffect(() => {
-    const dadosAtualizados = {
-      ...formData,
-      ...dataCep,
-    };
-    setDadosFinaisAtualizados(dadosAtualizados);
-  }, [formData, dataCep]);
-  
-
-  const enviar = (e) => {
+  const enviar = e => {
+    //evita que a tela carregue depois de clicar no botão submit do form
     e.preventDefault();
-    console.log('Form:', dadosFinaisAtualizados);
-
-    const jsonData = JSON.stringify(dadosFinaisAtualizados, null, 2);
-    setJsonOutput(jsonData); //jsonData captura todas as informações dos inputs através do formData, transforma em string e coloca em um arquivo JSON
-
-    // setFormData({}); // não está limpando os campos
-  };
-
-  useEffect(() => {
-    preencherEstados();
-  }, [])
-
-  // useEffect(() => {
-  //   const estadoSelecionado = formData.estado; // Pega o estado selecionado
-  //   if (estadoSelecionado) {
-  //     preencherMunicipios(estadoSelecionado);
-  //   }
-  // }, [formData.estado]); // Chama ao mudar o estado
+    console.log('Form:', formData);
+  }
 
   return (
     <>
@@ -168,7 +70,6 @@ function App() {
             label='CEP'
             id='cep'
             type='text'
-            maxlength="8"
             handleChange={handleChange}
           />
 
@@ -176,7 +77,6 @@ function App() {
             inputSize={8}
             label='Endereço'
             id='endereco'
-            value={dataCep.endereco}
             handleChange={handleChange}
           />
 
@@ -185,6 +85,7 @@ function App() {
             label='Número'
             id='numero'
             type='number'
+            //ref={inputRef}
             handleChange={handleChange}
           />
 
@@ -199,44 +100,27 @@ function App() {
             inputSize={4}
             label='Bairro'
             id='bairro'
-            value={dataCep.bairro}
             handleChange={handleChange}
           />
 
           <Select
             label='Estado'
             id='estado'
-            valueEstado={dataCep.estado}
             handleChange={handleChange}
-            options={estadosArmazenados.map(estado => ({
-              value: estado.nome,
-              label: estado.sigla,
-            }))}
           />
 
-          <SelectMunicipio
+          <Select
             label='Cidade'
             id='cidade'
-            valueMunicipio={dataCep.cidade}
             handleChange={handleChange}
-            options={municipiosArmazenados.map(municipio => ({
-              value: municipio.nome,
-              label: municipio.nome,
-            }))}
           />
 
           <Button type='submit' label='Salvar' />
-          <Button type='reset' variant='light' label='Limpar' onClick={() => setFormData({})} />
+          <Button type='reset' variant='light' label='Limpar' />
         </form>
-
-        <div className="container text-light bg-dark">
-          <h3>Dados do JSON:</h3>
-          <pre>{jsonOutput}</pre>
-
-        </div>
       </main>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
